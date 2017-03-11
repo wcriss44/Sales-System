@@ -20,6 +20,13 @@ public class Item {
         this.price = price;
         this.id = id;
     }
+    public Item(String name, String description,  double price, int id, int orderAmount) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.id = id;
+        this.orderAmount = orderAmount;
+    }
 
     /*******************************
      * Getters

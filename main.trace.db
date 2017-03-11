@@ -50,3 +50,9 @@ SELECT * FROM orders INNER JOIN items ON orders.item_id = item.id WHERE orders.o
 	at org.h2.server.web.WebThread.process(WebThread.java:164)
 	at org.h2.server.web.WebThread.run(WebThread.java:89)
 	at java.lang.Thread.run(Thread.java:745)
+2017-03-10 21:45:08 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT ITEMS.ID, ITEMS.NAME, ITEMS.PRICE, ITEMS.DESCRIPTION ORDERS.[*]QUANTITY, FROM ORDERS INNER JOIN ITEMS ON ORDERS.ITEM_ID = ITEMS.ID JOIN USERS ON ORDERS.USER_ID = USERS.ID WHERE ORDERS.ID = 1 "; SQL statement:
+SELECT items.id, items.name, items.price, items.description orders.quantity, FROM orders INNER JOIN items ON orders.item_id = items.id JOIN users ON orders.user_id = users.id WHERE orders.id = 1 [42000-191]
+2017-03-10 21:45:18 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT ITEMS.ID, ITEMS.NAME, ITEMS.PRICE, ITEMS.DESCRIPTION, ORDERS.QUANTITY, FROM ORDERS INNER JOIN ITEMS ON ORDERS.ITEM_ID = ITEMS.ID JOIN USERS ON ORDERS.USER_ID = USERS.ID WHERE[*] ORDERS.ID = 1 "; expected "(, ., [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, RIGHT, LEFT, FULL, INNER, JOIN, CROSS, NATURAL, ,, SELECT"; SQL statement:
+SELECT items.id, items.name, items.price, items.description, orders.quantity, FROM orders INNER JOIN items ON orders.item_id = items.id JOIN users ON orders.user_id = users.id WHERE orders.id = 1 [42001-191]

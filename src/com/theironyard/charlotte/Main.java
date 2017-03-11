@@ -16,6 +16,14 @@ public class Main {
         insertUser("Mike", "else", true);
 
         ArrayList<Item> items = new ArrayList<>();
+        items.add(selectItem(1));
+        items.add(selectItem(2));
+        items.add(selectItem(4));
+
+        items.get(0).setOrderAmount(3);
+        items.get(1).setOrderAmount(2);
+        items.get(2).setOrderAmount(44);
+
         insertOrder(1, items);
 
     }
@@ -39,8 +47,10 @@ public class Main {
     public static void main(String[] args) throws SQLException{
         Server.createWebServer().start();
         createTables();
-        insertItem("pizza", "fast food", 3, 20);
-        insertUser("will", "supDog", false);
+        //testData();
+        Order order = selectOrder(1, 1);
+        //TODO: FINISH WORKING ON selectOrder() method.
+        System.out.println(order.getItems().get(1).getOrderAmount());
 
         /**************************
          *Spark GET routes
@@ -153,23 +163,47 @@ public class Main {
      *******************************/
 
     //SQL command -> SELECT items.id, items.name, items.quantity, users.name FROM orders INNER JOIN items ON orders.item_id = items.id JOIN users ON orders.user_id = users.id WHERE orders.order_number = 1
-    public static Order selectOrder(String name, int userId) throws SQLException{
+    public static Order selectOrder(int orderId, int userId) throws SQLException{
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders INNER JOIN items ON orders.item_id = items.id WHERE id = ?");
+        PreparedStatement statement = connection.prepareStatement("SELECT users.name, orders.id, items.id, items.name, items.price, items.description, orders.quantity FROM orders INNER JOIN items ON orders.item_id = items.id JOIN users ON orders.user_id = ? WHERE orders.id = ?");
         statement.setInt(1, userId);
+        statement.setInt(2, orderId);
 
         Order order = null;
+        ArrayList<Item> items = null;
+        String buyer = null;
+
         ResultSet result = statement.executeQuery();
         while(result.next()){
-
+            buyer = result.getString("users.name");
+            String name = result.getString("items.name");
+            String description = result.getString("items.description");
+            Double price = result.getDouble("items.price");
+            int id =result.getInt("items.id");
+            int orderAmount = result.getInt("orders.quantity");
+            items.add(new Item(name, description, price, id, orderAmount));
         }
+        order = new Order(orderId, items, buyer);
         return order;
     }
     public static void insertOrder(int userId, ArrayList<Item> items) throws SQLException{
         Connection connection = getConnection();
+        PreparedStatement getId = connection.prepareStatement("SELECT id FROM orders");
+        ResultSet results = getId.executeQuery();
+
+        int id = 0;
+        while(results.next()){
+            if (results.getInt("id") >= id){
+                id++;
+            }
+        }
         for(Item item: items){
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders VALUES(NULL, ?, ?, ?)");
-            statement.setInt
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders VALUES(?, ?, ?, ?)");
+            statement.setInt(1, id);
+            statement.setInt(2, item.getId());
+            statement.setInt(3, userId);
+            statement.setInt(4, item.getOrderAmount());
+            statement.execute();
         }
 
 
