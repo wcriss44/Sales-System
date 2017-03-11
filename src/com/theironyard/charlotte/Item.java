@@ -5,14 +5,15 @@ public class Item {
     private String name;
     private String description;
     private int quantity;
-    private int price;
     private int id;
+    private int orderAmount;
+    private double price;
 
     /*******************************
      * Constructor
      *******************************/
 
-    public Item(String name, String description, int quantity, int price, int id) {
+    public Item(String name, String description, int quantity, double price, int id) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
@@ -36,12 +37,16 @@ public class Item {
         return quantity;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getOrderAmount() {
+        return orderAmount;
     }
 
     /*******************************
@@ -60,11 +65,15 @@ public class Item {
         this.quantity = quantity;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setOrderAmount(int orderAmount) {
+        this.orderAmount = orderAmount;
     }
 }
