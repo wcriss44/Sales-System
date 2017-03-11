@@ -2,6 +2,8 @@ package com.theironyard.charlotte;
 
 public class User {
     private String name;
+    private String initials;
+    private String firstName;
     private int id;
     private boolean admin;
 
@@ -9,6 +11,11 @@ public class User {
         this.name = name;
         this.id = id;
         this.admin = admin;
+        String[] names = name.split(" ");
+        String firstLetter = names[0].substring(0, 1);
+        String secondLetter = names[1].substring(0, 1);
+        this.initials = firstLetter + secondLetter;
+        this.firstName = names[0];
     }
 
     /*******************************
