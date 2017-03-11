@@ -38,7 +38,7 @@ public class Sparky {
                     Session session = request.session();
                     HashMap m = new HashMap<>();
                     m.put("Hello", session.attribute("userName"));
-                    return new ModelAndView(m, "home.html");
+                    return new ModelAndView(m, "index.html");
                 },
                 new MustacheTemplateEngine()
         );
