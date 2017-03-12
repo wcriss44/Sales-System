@@ -1,19 +1,22 @@
 package com.theironyard.charlotte;
 
+import java.util.ArrayList;
+
 public class User {
     private String name;
     private String initials;
     private int id;
     private boolean admin;
+    private ArrayList<Order> orders = new ArrayList<>();
 
-    public User(String name, int id, boolean admin) {
+    public User(String name, int id, boolean admin, ArrayList<Order> orders) {
         this.name = name;
         this.id = id;
         this.admin = admin;
         String firstLetter = name.substring(0, 1);
         String secondLetter = name.substring(name.length() - 1).toUpperCase();
         this.initials = firstLetter + secondLetter;
-        System.out.println(initials);
+        this.orders = orders;
     }
 
     /*******************************
@@ -30,6 +33,9 @@ public class User {
     }
     public String getInitials(){
         return initials;
+    }
+    public ArrayList<Order> getOrders(){
+        return orders;
     }
 
     /*******************************

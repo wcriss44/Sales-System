@@ -14,6 +14,7 @@
 <body class=''>
 <div class="l-main">
     <header>
+
         <div class="l-header" data-header>
             <a class="l-header-logo s-beta-logo" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
                 <img src="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/newline-logo-5b34a515dd7a73c929bb38721f9076d2bc7d9747fe707fc51cf94286314d2afd.svg">
@@ -23,12 +24,14 @@
             <li><a title="Browse" href="/browse">Browse</a></li>
 
             <li><a title="Checkout" href="/check-out">Check out</a></li>
+            {{#user}}
             {{#adminStatus}}
             <li><a title="Manage Items" href="/manage-items">Manage items</a></li>
             {{/adminStatus}}
             {{^adminStatus}}
             <li><a title="Ajax" href="http://www.colgatecommercial.com/brands.aspx?brand=Ajax">Ajax</a></li>
             {{/adminStatus}}
+            {{/user}}
         </ul>
             {{#user}}
             <div data-header-dropdown class="l-header-profile xs-hide sm-hide">
@@ -41,11 +44,13 @@
                         <li class="l-header-profile-dropdown-user">
                             {{name}}
                         </li>
-                        <li role="menuitem">
+                        <li>
+                        <a class= "l-header-profile-dropdown-link" href="#" onclick="window.open('/cart', 'newwindow', 'width=600, height=500'); return false;">Click here to open new window</a>
+                        </li><li role="menuitem">
                             <a class="l-header-profile-dropdown-link" href="/cart">Cart</a>
                         </li>
                         <li role="menuitem">
-                            <a class="l-header-profile-dropdown-link" href="http://endoftheinternet.com">Don't click me(seriously)</a>
+                            <a class="l-header-profile-dropdown-link" href="http://endoftheinternet.com">Don't click me</a>
                         </li>
                         <li role="menuitem">
                             <a class="l-header-profile-dropdown-link" href="https://ex-lax.com/index.shtml">Get Help</a>
@@ -58,68 +63,38 @@
             </div>
             <button data-open="push-menu" class="l-header-hamburger md-hide lg-hide"></button>
         </div>
-        {{/user}}
     </header>
     <section class="l-content">
             <div class="max-width-2 mx-auto px2">
                 <div class="clearfix pb4">
-                    <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Items for sale</h1></p>
+                    <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Your orders:</h1></p>
                     <article class="m-lessoncontent">
-                        <p>Your task is to write a web-based sales system that is designed to be used by multiple people <em>simultaneously</em>. Hint: This means sessions will play a role in the system. Remember sessions? They're important.</p>
-                        <p>But first, enjoy this gif that basically summarizes everything you need to know about kids:</p>
-                        <p>Okay, let's do this.</p>
-                        <h2>Requirements</h2>
-                        <p>This system should:</p>
-                        <ul>
-                            {{#user}}
-                            <p>the name: {{name}}, the initials: {{initials}}</p>
-                            {{/user}}
-                            <li>Login users
-                                <ul>
-                                    <li>You can have a predefined set of users beforehand.</li>
-                                </ul>
-                            </li>
-                            <li>Allow a user to build a "cart" of items.
-                                <ul>
-                                    <li>You can just have three boxes here which comprise an item (quantity, name, and amount)</li>
-                                    <li>The user gets to pick (not like in real life) the item, its cost, and its quantity before it gets added to the cart.</li>
-                                </ul>
-                            </li>
-                            <li>Allow a user to "checkout" the cart.
-                                <ul>
-                                    <li>"Checking Out" is basically showing them an order summary page and clearing their cart.</li>
-                                    <li>This summary page should show the user data, and the details of their order (the quantities, amount, and total amount)</li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <p>All of this information (the users, the items in their cart, and the orders) should be stored in a SQL database.</p>
-                        <p>There should be 3 SQL tables that store this data:</p>
-                        <ol>
-                            <li><code>users</code></li>
-                            <li><code>items</code></li>
-                            <li><code>orders</code></li>
-                        </ol>
-                        <p>There is a 1-many relationship between users-orders, and a 1-many relationship between orders-items.</p>
-                        <h2>HARD MODE</h2>
-
-                        <ul>
-                            <li>Create a user registration page for custom users</li>
-                            <li>Create a predefined list of items that the user can choose from (like in real life, instead of them being able to arbitrarily set an item to purchase and its cost)</li>
-                            <li>Use semantic HTML, and make the site look nice with CSS</li>
-                            <li>Include a 7% sales tax with the purchase</li>
-                        </ul>
-                        <h2>LUDICROUS MODE</h2>
-                        <ul>
-                            <li>Add interactivity to your webpage with AJAX.</li>
-                            <li>Make the sales tax dependent on where the user made the order</li>
-                        </ul>
+                        {{#orders}}
+                        <table>
+                            <p>Order number: {{id}}</p>
+                            <tr>
+                                <th>Quantity</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                            </tr>
+                                {{#items}}
+                            <tr>
+                                <td>{{orderAmount}}</td>
+                                <td>{{name}}</td>
+                                <td>{{price}}</td>
+                            </tr>
+                                {{/items}}
+                        </table>
+                    <hr/>
+                        {{/orders}}
                     </article>
                 </div>
             </div>
     </section>
+    {{/user}}
     <footer class="l-footer">
         <div class="max-width-4 mx-auto px2">
-            &copy; Copyright 2015-2017 - The Iron Yard. Additions, changes, and other such nonesensory made by a student for assignment
+            &copy; Copyright 2015-2017 - The Iron Yard. Additions, changes, and other such tom foolery made by a student for assignment
         </div>
     </footer>
 </div>

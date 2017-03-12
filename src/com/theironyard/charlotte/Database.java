@@ -50,7 +50,7 @@ public class Database {
             name = result.getString("name");
             admin = result.getBoolean("admin");
         }
-        return new User(name, id, admin);
+        return new User(name, id, admin, selectOrders(id));
     }
     public void insertUser(String name, String password, boolean admin) throws SQLException{
         Connection connection = getConnection();
@@ -188,5 +188,23 @@ public class Database {
             statement.setInt(4, item.getOrderAmount());
             statement.execute();
         }
+    }
+    public ArrayList<Order> selectOrders(int userId) throws SQLException{
+        //This method gets the ID number for each order and adds a single Order object by calling the select order method
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT id FROM ORDERS WHERE user_id = ?");
+        statement.setInt(1, userId);
+
+        int tempId = -1;
+        ArrayList<Order> orders = new ArrayList<>();
+        ResultSet results = statement.executeQuery();
+        while(results.next()){
+            int id = results.getInt("id");
+            if(id > tempId){
+                tempId = id;
+                orders.add(selectOrder(id, userId));
+            }
+        }
+        return orders;
     }
 }

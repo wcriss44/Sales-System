@@ -1,5 +1,6 @@
 package com.theironyard.charlotte;
 
+import org.h2.engine.Mode;
 import spark.ModelAndView;
 import spark.Session;
 import spark.Spark;
@@ -39,7 +40,7 @@ public class Sparky {
                     Session session = request.session();
                     HashMap m = new HashMap<>();
 
-                    String user = session.attribute("user");
+                    User user = session.attribute("user");
                     if (user == null){
                         return new ModelAndView(m, "index.html");
                     } else {
@@ -75,6 +76,21 @@ public class Sparky {
                         m.put("user", user);
                         return new ModelAndView(m, "home.html");
                     }
+                },
+                new MustacheTemplateEngine()
+        );
+        Spark.get(
+                "/",
+                (request, response) -> {
+                    Session session = request.session();
+                    HashMap m = new HashMap();
+                    User user = session.attribute("user");
+                    if (user == null){
+                        return new ModelAndView(m, "register.html");
+                    }
+                    m.put("user", user);
+                    m.put("cart", session.attribute("cart"));
+                    return new ModelAndView(m, "cart.html");
                 },
                 new MustacheTemplateEngine()
         );
