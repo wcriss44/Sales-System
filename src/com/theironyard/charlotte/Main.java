@@ -11,7 +11,7 @@ public class Main {
         Database db = Database.getInstance();
         db.createTables();
         Sparky spark = Sparky.getInstance();
-        spark.start();
+        //spark.start();
 
     }
     /**

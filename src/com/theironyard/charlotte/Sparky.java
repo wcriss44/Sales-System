@@ -288,7 +288,7 @@ public class Sparky {
     /******************************
      * Methods for user
      *****************************/
-    public boolean userVerification(String name, String password, boolean admin, String city, String state, String zip) throws SQLException, IOException{
+    public boolean userVerification(String name, String password, String zip) throws SQLException{
         ArrayList<String> userNames = db.selectUserNames();
         for (String userName: userNames){
             if (name.equals(userName)){
@@ -298,23 +298,38 @@ public class Sparky {
         if (password.length() < 8){
             return false;
         }
-
-        String url = "http://isbndb.com/api/v2/json/2NE3ECKO/book/";
-        url += title;
-
-        URL oracle = new URL(url);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(oracle.openStream()));
-
-        String inputLine;
-
-        while ((inputLine = in.readLine()) != null) {
-            if (inputLine.contains("isbn10")){
-                isbn = inputLine.substring(21,31);
+        try {
+            if (getApiTax(Integer.valueOf(zip)) == null) {
+                return false;
+            } else {
+                return true;
             }
+        } catch (Exception e){
+            return false;
         }
-        in.close();
+    }
+    public String getApiTax(int zip) {
+        String url = "https://taxrates.api.avalara.com:443/postal?country=usa&postal=";
+        String taxRate = null;
+        url += zip;
+        url += "&apikey=805mYBrUSwE8K6waoX8W2QKHfr9ynITxbVtYsg1WzgD9brvKMj%2BSy8rDN614skUPnAiou5pXWAJm%2BstD7RrUrA%3D%3D";
+        try {
+            URL oracle = new URL(url);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(oracle.openStream()));
 
-        return true;
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                if (inputLine.contains("totalRate")) {
+                    taxRate = inputLine.substring(15, 18);
+
+                }
+            }
+            in.close();
+            return taxRate;
+        } catch (Exception e){
+            return null;
+        }
     }
 }
