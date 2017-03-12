@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-param" content="authenticity_token" />
     <meta name="csrf-token" content="6g1+QA60VGQZNUt2lhOFYuqHDGE73726DXOxKZNSGx63hHuFzlL1+zTODII2aAIkhCmCec84JkKpnzXCOaVmeQ==" />
-    <title></title>
+    <title>Home | Shop-A-Lot</title>
 <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/favicon-77ee7ce61d8b909af9f0775490ee1953843bd1cda601ee32845e2bd2a27833a4.ico">
     <link rel="stylesheet" media="screen" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/web/library.manifest-11e15ae036b971c0f0eb707b1d3c950dfa2cc830ffe0259683595dcd8e78d942.css" />
@@ -26,15 +26,16 @@
 
             <li><a title="Catalog" href="/catalog">Catalog</a></li>
         </ul>
+            {{#user}}
             <div data-header-dropdown class="l-header-profile xs-hide sm-hide">
-                <span class="l-header-profile-name">William{{firstName}}</span>
+                <span class="l-header-profile-name">{{name}}</span>
                 <div class="l-header-profile-picture">
-                    <div class="m-profileimage s-profileimage-thumb" style="background-color: #32d3cb">{{initials}}WC</div>
+                    <div class="m-profileimage s-profileimage-thumb" style="background-color: #32d3cb">{{initials}}</div>
                 </div>
                 <div class="l-header-profile-dropdown" role="menu">
                     <ul>
                         <li class="l-header-profile-dropdown-user">
-                            {{name}}William Criss
+                            {{name}}
                         </li>
                         <li role="menuitem">
                             <a class="l-header-profile-dropdown-link" href="/subscriptions/new">I got this shit</a>
@@ -53,6 +54,7 @@
             </div>
             <button data-open="push-menu" class="l-header-hamburger md-hide lg-hide"></button>
         </div>
+        {{/user}}
     </header>
     <section class="l-content">
             <div class="max-width-2 mx-auto px2">
@@ -65,6 +67,9 @@
                         <h2>Requirements</h2>
                         <p>This system should:</p>
                         <ul>
+                            {{#user}}
+                            <p>the name: {{name}}, the initials: {{initials}}</p>
+                            {{/user}}
                             <li>Login users
                                 <ul>
                                     <li>You can have a predefined set of users beforehand.</li>

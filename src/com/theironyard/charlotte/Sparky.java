@@ -8,6 +8,7 @@ import spark.template.mustache.MustacheTemplateEngine;
 import java.util.HashMap;
 
 public class Sparky {
+    Database db = Database.getInstance();
     /*******************************
      * Singleton methods and fields
      *******************************/
@@ -25,7 +26,7 @@ public class Sparky {
      * Start the Spark
      **************************/
 
-    public static void start() {
+    public void start() {
         Spark.init();
 
         /**************************
@@ -37,8 +38,43 @@ public class Sparky {
                 (request, response) -> {
                     Session session = request.session();
                     HashMap m = new HashMap<>();
-                    m.put("Hello", session.attribute("userName"));
-                    return new ModelAndView(m, "index.html");
+
+                    String user = session.attribute("user");
+                    if (user == null){
+                        return new ModelAndView(m, "index.html");
+                    } else {
+                        m.put("user", user);
+                        return new ModelAndView(m, "home.html");
+                    }
+                },
+                new MustacheTemplateEngine()
+        );
+        Spark.get(
+                "/register",
+                (request, response) -> {
+                    Session session = request.session();
+                    HashMap m = new HashMap<>();
+                    User user = session.attribute("user");
+                    if (user != null){
+                        return new ModelAndView(m, "home.html");
+                    }else {
+                        return new ModelAndView(m, "register.html");
+                    }
+                },
+                new MustacheTemplateEngine()
+        );
+        Spark.get(
+                "/home",
+                (request, response) -> {
+                    Session session = request.session();
+                    HashMap m = new HashMap();
+                    User user = session.attribute("user");
+                    if (user == null){
+                        return new ModelAndView(m, "register.html");
+                    } else {
+                        m.put("user", user);
+                        return new ModelAndView(m, "home.html");
+                    }
                 },
                 new MustacheTemplateEngine()
         );
@@ -48,6 +84,22 @@ public class Sparky {
          **************************/
         Spark.post(
                 "/login",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user")!= null){
+                        response.redirect("home");
+                    }
+                    else if(db.verifyUser(request.queryParams("userName"), request.queryParams("password"))){
+                        session.attribute("user", db.selectUser(request.queryParams("userName")));
+                        response.redirect("/home");
+                    } else {
+                        response.redirect("/");
+                    }
+                    return "";
+                }
+        );
+        Spark.post(
+                "/register",
                 (request, response) -> {
                     Session session = request.session();
                     session.attribute("userName", request.queryParams("name"));

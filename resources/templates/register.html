@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-param" content="authenticity_token" />
     <meta name="csrf-token" content="6g1+QA60VGQZNUt2lhOFYuqHDGE73726DXOxKZNSGx63hHuFzlL1+zTODII2aAIkhCmCec84JkKpnzXCOaVmeQ==" />
-    <title>Browse | Shop-A-Lot</title>
+    <title>Register | Shop-A-Lot</title>
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/favicon-77ee7ce61d8b909af9f0775490ee1953843bd1cda601ee32845e2bd2a27833a4.ico">
     <link rel="stylesheet" media="screen" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/web/library.manifest-11e15ae036b971c0f0eb707b1d3c950dfa2cc830ffe0259683595dcd8e78d942.css" />
@@ -33,9 +33,18 @@
     <section class="l-content">
         <div class="max-width-2 mx-auto px2">
             <div class="clearfix pb4">
-                <p class="m-lessoncontent-desc-body"><h1 style="text-align: center;">Items for sale</h1></p>
+                <p class="m-lessoncontent-desc-body"><h1 style="text-align: center;">Registration</h1></p>
                 <article class="m-lessoncontent">
-
+                <form action="/register" method="post">
+                    <input type="text" placeholder="User Name:" name="userName">
+                    <input type="password" placeholder="Password: " name="password">
+                    <select name="adminStatus">
+                        <option selected disabled>Admin Status</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <button type="submit">Register</button>
+                </form>
                 </article>
             </div>
         </div>

@@ -3,7 +3,6 @@ package com.theironyard.charlotte;
 public class User {
     private String name;
     private String initials;
-    private String firstName;
     private int id;
     private boolean admin;
 
@@ -11,11 +10,10 @@ public class User {
         this.name = name;
         this.id = id;
         this.admin = admin;
-        String[] names = name.split(" ");
-        String firstLetter = names[0].substring(0, 1);
-        String secondLetter = names[1].substring(0, 1);
+        String firstLetter = name.substring(0, 1);
+        String secondLetter = name.substring(name.length() - 1).toUpperCase();
         this.initials = firstLetter + secondLetter;
-        this.firstName = names[0];
+        System.out.println(initials);
     }
 
     /*******************************
@@ -30,6 +28,9 @@ public class User {
     public boolean isAdmin() {
         return admin;
     }
+    public String getInitials(){
+        return initials;
+    }
 
     /*******************************
      * Setters
@@ -43,5 +44,8 @@ public class User {
     }
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+    public void setInitials(String initials){
+        this.initials = initials;
     }
 }

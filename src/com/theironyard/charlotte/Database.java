@@ -23,11 +23,11 @@ public class Database {
      * Database connection
      ******************************/
 
-    public static Connection getConnection() throws SQLException{
+    public Connection getConnection() throws SQLException{
         Connection connection = DriverManager.getConnection("jdbc:h2:./main");
         return connection;
     }
-    public static void createTables() throws SQLException{
+    public void createTables() throws SQLException{
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR, admin BOOLEAN)");
