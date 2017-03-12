@@ -288,7 +288,7 @@ public class Sparky {
                         return "";
 
                     } else {
-                        response.redirect("/");
+                        response.redirect("/register");
                         return "";
                     }
                 }
