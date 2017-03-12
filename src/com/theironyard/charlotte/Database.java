@@ -33,6 +33,7 @@ public class Database {
         statement.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR, admin BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS items(id IDENTITY, name VARCHAR, description VARCHAR, quantity INTEGER, price DOUBLE)");
         statement.execute("CREATE TABLE IF NOT EXISTS orders(id INT, item_id INTEGER, user_id INTEGER, quantity INTEGER)");
+        statement.execute("CREATE TABLE IF NOT EXISTS orderTotal(id IDENTITY, order_id INTEGER, subtotal DOUBLE, tax DOUBLE, total DOUBLE)");
     }
 
     /*******************************
@@ -169,12 +170,12 @@ public class Database {
         order = new Order(orderId, items, buyer);
         return order;
     }
-    public void insertOrder(int userId, ArrayList<Item> items) throws SQLException{
+    public void insertOrder(int userId, ArrayList<Item> items, double subtotal, double tax, double total) throws SQLException{
         Connection connection = getConnection();
         PreparedStatement getId = connection.prepareStatement("SELECT id FROM orders");
         ResultSet results = getId.executeQuery();
 
-        int id = 0;
+        int id = 1;
         while(results.next()){
             if (results.getInt("id") >= id){
                 id++;
@@ -188,6 +189,7 @@ public class Database {
             statement.setInt(4, item.getOrderAmount());
             statement.execute();
         }
+        insertOrderTotal(id, subtotal, tax, total);
     }
     public ArrayList<Order> selectOrders(int userId) throws SQLException{
         //This method gets the ID number for each order and adds a single Order object by calling the select order method
@@ -206,5 +208,28 @@ public class Database {
             }
         }
         return orders;
+    }
+
+    /*******************************
+     * Order SQL methods
+     *******************************/
+    //id IDENTITY, order_id INTEGER, subtotal DOUBLE, tax DOUBLE, total DOUBLE
+    public double[] selectOrderTotal(int orderId) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM orderTotal WHERE order_id = ?");
+        statement.setInt(1, orderId);
+        ResultSet result = statement.executeQuery();
+
+        double[] orderTotals = {result.getDouble("subtotal"), result.getDouble("tax"), result.getDouble("total")};
+        return orderTotals;
+    }
+    public void insertOrderTotal(int orderId, double subtotal, double tax, double total) throws SQLException{
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO orderTotal VALUES(NULL, ?, ?, ?, ?)");
+        statement.setDouble(1, orderId);
+        statement.setDouble(2, subtotal);
+        statement.setDouble(3, tax);
+        statement.setDouble(4, total);
+        statement.execute();
     }
 }

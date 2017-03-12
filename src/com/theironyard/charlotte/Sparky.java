@@ -114,6 +114,24 @@ public class Sparky {
                 },
                 new MustacheTemplateEngine()
         );
+        Spark.get(
+                "/check-out",
+                (request, response) -> {
+                    Session session = request.session();
+                    HashMap m = new HashMap();
+                    User user = session.attribute("user");
+                    if (user == null){
+                        return new ModelAndView(m, "register.html");
+                    }
+                    m.put("user", user);
+                    m.put("cart", session.attribute("cart"));
+                    m.put("subTotal", session.attribute("subTotal"));
+                    m.put("tax", session.attribute("tax"));
+                    m.put("total", session.attribute("total"));
+                    return new ModelAndView(m, "checkout.html");
+                },
+                new MustacheTemplateEngine()
+        );
 
         /**************************
          *Spark POST routes
@@ -180,6 +198,30 @@ public class Sparky {
                         populateTotals(session);
                         response.redirect("/cart");
                         return"";
+                }
+        );
+        Spark.post(
+                "/checkout",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user") == null){
+                        response.redirect("/register");
+                        return "";
+                    }
+                    User user = session.attribute("user");
+                    String userName = user.getName();
+                    ArrayList<Item> cart = session.attribute("cart");
+                    db.insertOrder(user.getId(), cart, session.attribute("subTotal"),session.attribute("tax"), session.attribute("total"));
+                    session.removeAttribute("cart");
+                    session.removeAttribute("subTotal");
+                    session.removeAttribute("tax");
+                    session.removeAttribute("total");
+
+                    session.removeAttribute("user");
+                    session.attribute("user", db.selectUser(userName));
+
+                    response.redirect("/home");
+                    return "";
                 }
         );
     }
