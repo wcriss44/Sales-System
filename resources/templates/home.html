@@ -68,6 +68,10 @@
                 <div class="clearfix pb4">
                     <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Your orders:</h1></p>
                     <article class="m-lessoncontent">
+                        <div id="cartview">
+                            <i class="material-icons" style="color:black; display:inline;">shopping_cart</i>
+                            <button type="button" style="display:inline;" onclick="loadDoc()">Load Cart</button>
+                        </div>
                         {{#orders}}
                         <table>
                             <p>Order number: {{id}}</p>
@@ -104,6 +108,19 @@
         </div>
     </footer>
 </div>
+<script>
+    function loadDoc() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("cartview").innerHTML =
+                    this.responseText;
+            }
+        };
+        xhttp.open("GET", "http://127.0.0.1:4567/cart", true);
+        xhttp.send();
+    }
+</script>
 <!-- This script handles the sliding menu when you click on user name-->
 <script src="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/library.manifest-04e85156b4d5d33ff285dd0da16d42d06916d439f77d93a62517a3f1d1093e60.js"></script>
 
