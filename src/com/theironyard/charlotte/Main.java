@@ -7,17 +7,17 @@ import java.sql.*;
 public class Main {
 
     public static void main(String[] args) throws SQLException{
-       // Server.createWebServer().start();
+        //Server.createWebServer().start();
         Database db = Database.getInstance();
         db.createTables();
         Sparky spark = Sparky.getInstance();
-        //spark.start();
+        spark.start();
 
     }
     /**
      * TODO: Add logout
      * TODO: Manage items for admin
-     * TODO: tax based on location (Need to add location fields to user)
+     * TODO: tax based on location (Need to add location fields to user) DONE
      * TODO: registration page
      * TODO: cleanup
      * TODO: Ajax

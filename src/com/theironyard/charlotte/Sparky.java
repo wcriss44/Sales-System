@@ -119,6 +119,16 @@ public class Sparky {
                 new MustacheTemplateEngine()
         );
         Spark.get(
+                "/logout",
+                (request, response) -> {
+                    Session session = request.session();
+                    HashMap m = new HashMap();
+                    session.invalidate();
+                    return new ModelAndView(m, "index.html");
+                },
+                new MustacheTemplateEngine()
+        );
+        Spark.get(
                 "/check-out",
                 (request, response) -> {
                     Session session = request.session();
@@ -151,7 +161,7 @@ public class Sparky {
                         session.attribute("user", db.selectUser(request.queryParams("userName")));
                         response.redirect("/home");
                     } else {
-                        response.redirect("/");
+                        response.redirect("/register");
                     }
                     return "";
                 }
@@ -161,9 +171,28 @@ public class Sparky {
                 (request, response) -> {
                     //needs building
                     Session session = request.session();
-                    session.attribute("userName", request.queryParams("name"));
-                    response.redirect("/");
-                    return "";
+                    String userName = request.queryParams("userName");
+                    String password = request.queryParams("password");
+                    if (userVerification(userName, password, request.queryParams("zip"))) {
+                        String city = request.queryParams("city");
+                        String state = request.queryParams("state");
+                        int zip = Integer.valueOf(request.queryParams("zip"));
+                        double taxRate = Double.valueOf(getApiTax(zip));
+                        boolean adminStatus = false;
+
+
+                        if (request.queryParams("adminStatus").equals("yes")){
+                            adminStatus = true;
+                        }
+                        db.insertUser(userName, password, adminStatus, city, state, zip,taxRate);
+                        session.attribute("user", db.selectUser(userName));
+                        response.redirect("/home");
+                        return "";
+
+                    } else {
+                        response.redirect("/");
+                        return "";
+                    }
                 }
         );
         Spark.post(
@@ -255,16 +284,16 @@ public class Sparky {
     public void populateTotals(Session session){
         //Variables needed so I can add sub and tax
         ArrayList<Item> items = session.attribute("cart");
+        User user = session.attribute("user");
         double sub = subTotal(items);
-        double tax = getTax(items);
+        double tax = getTax(items, user.getTaxRate());
         double total = sub + tax;
         session.attribute("subTotal", sub);
         session.attribute("tax", tax);
         session.attribute("total", total);
     }
-    public double getTax(ArrayList<Item> cart){
-
-        return .07 * subTotal(cart);
+    public double getTax(ArrayList<Item> cart, double taxRate){
+        return taxRate * subTotal(cart);
     }
     public double subTotal(ArrayList<Item> cart){
         double total = 0;

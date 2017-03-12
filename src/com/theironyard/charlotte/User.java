@@ -10,9 +10,10 @@ public class User {
     private String city;
     private String state;
     private int zip;
+    private double taxRate;
     private ArrayList<Order> orders = new ArrayList<>();
 
-    public User(String name, int id, boolean admin, ArrayList<Order> orders, String city, String state, int zip) {
+    public User(String name, int id, boolean admin, ArrayList<Order> orders, String city, String state, int zip, double taxRate) {
         this.name = name;
         this.id = id;
         this.admin = admin;
@@ -23,6 +24,7 @@ public class User {
         this.city = city;
         this.state = state;
         this.zip = zip;
+        this.taxRate = taxRate;
     }
 
     /*******************************
@@ -56,6 +58,10 @@ public class User {
         return zip;
     }
 
+    public double getTaxRate() {
+        return taxRate;
+    }
+
     /*******************************
      * Setters
      *******************************/
@@ -87,5 +93,9 @@ public class User {
 
     public void setOrders(ArrayList<Order> orders) {
         this.orders = orders;
+    }
+
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
     }
 }

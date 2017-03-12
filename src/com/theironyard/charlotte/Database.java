@@ -1,5 +1,8 @@
 package com.theironyard.charlotte;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -30,7 +33,7 @@ public class Database {
     public void createTables() throws SQLException{
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR, admin BOOLEAN, city VARCHAR, state VARCHAR, zip INTEGER)");
+        statement.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR, admin BOOLEAN, city VARCHAR, state VARCHAR, zip INTEGER, tax_rate DOUBLE)");
         statement.execute("CREATE TABLE IF NOT EXISTS items(id IDENTITY, name VARCHAR, description VARCHAR, quantity INTEGER, price DOUBLE)");
         statement.execute("CREATE TABLE IF NOT EXISTS orders(id INT, item_id INTEGER, user_id INTEGER, quantity INTEGER)");
         statement.execute("CREATE TABLE IF NOT EXISTS orderTotal(id IDENTITY, order_id INTEGER, subtotal DOUBLE, tax DOUBLE, total DOUBLE)");
@@ -47,6 +50,7 @@ public class Database {
         int id = 0, zip = 0;
         boolean admin = false;
         String city = null, state = null;
+        double taxRate = 0;
 
         while(result.next()){
             id = result.getInt("id");
@@ -55,18 +59,20 @@ public class Database {
             city = result.getString("city");
             state = result.getString("state");
             zip = result.getInt("zip");
+            taxRate = result.getDouble("tax_rate");
         }
-        return new User(name, id, admin, selectOrders(id), city, state, zip);
+        return new User(name, id, admin, selectOrders(id), city, state, zip, taxRate );
     }
-    public void insertUser(String name, String password, boolean admin, String city, String state, int zip) throws SQLException{
+    public void insertUser(String name, String password, boolean admin, String city, String state, int zip, double taxRate) throws SQLException{
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO users VALUES(NULL, ?, ?, ?, ?, ?, ?)");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO users VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)");
         statement.setString(1, name);
         statement.setString(2, password);
         statement.setBoolean(3, admin);
         statement.setString(4, city);
         statement.setString(5, state);
         statement.setInt(6, zip);
+        statement.setDouble(7, taxRate);
         statement.execute();
     }
     public boolean verifyUser(String userName, String password) throws SQLException{
@@ -260,4 +266,9 @@ public class Database {
         statement.setDouble(4, total);
         statement.execute();
     }
+    /*********************************
+     * Other methods
+     ********************************/
+
+
 }
