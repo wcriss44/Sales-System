@@ -24,7 +24,7 @@
             <td>{{orderAmount}}</td>
             <td>{{price}}</td>
             <td>
-                <form action="remove-cart" type="post">
+                <form action="/remove-cart" method="post">
                     <input type="hidden" value="{{id}}" name="id">
                     <button type="submit">Remove</button>
                 </form>
@@ -33,9 +33,9 @@
         {{/cart}}
     </table>
     <hr/>
-    <p style="text-align:right;">Subtotal: ${{subTotal}}</p>
-    <p style="text-align:right;">Tax: ${{tax}}</p>
+    <p style="text-align:right;"><strong>Subtotal:</strong> ${{subTotal}}</p>
+    <p style="text-align:right;"><strong>Tax:</strong> ${{tax}}</p>
     <hr/>
-    <p style="text-align:right;">Total: ${{total}}</p>
+    <p style="text-align:right;"><strong>Total:</strong> ${{total}}</p>
 </body>
 </html>

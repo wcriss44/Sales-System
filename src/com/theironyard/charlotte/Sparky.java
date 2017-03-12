@@ -6,6 +6,7 @@ import spark.Session;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -151,43 +152,89 @@ public class Sparky {
                         response.redirect("/register");
                         return "";
                         //Redirect if not logged in
-                    } //TODO: Able to copy from here above.
-                    if (session.attribute("cart") == null){
-                        session.attribute("cart", new ArrayList<Item>());
-                        //Create initial cart if needed
                     }
-                    if (Integer.valueOf(request.queryParams("quantity")) == 0){
+                         //Check for no items
+                    if (request.queryParams("quantity").equals("") || Integer.valueOf(request.queryParams("quantity")) <= 0){
                         response.redirect("/browse");
-                        return ""; //Check for no items
+                        return "";
                     }
-                    ArrayList<Item> items = session.attribute("cart");
-                    Item item = db.selectItem(Integer.valueOf(request.queryParams("id")));
-                    item.setOrderAmount(Integer.valueOf(request.queryParams("quantity")));
-                    items.add(item);
+                    int quantity = Integer.valueOf(request.queryParams("quantity"));
+                    int id = Integer.valueOf(request.queryParams("id"));
 
-                    //add logic for prices
-                    double sub = subTotal(items);
-                    double tax = getTax(items);
-                    double total = sub + tax;
-                    session.attribute("subTotal", sub);
-                    session.attribute("tax", tax);
-                    session.attribute("total", total);
-
+                    addItem(quantity, id, session);
                     response.redirect("/browse");
                     return "";
                 }
         );
+        Spark.post(
+                "/remove-cart",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user") == null){
+                        response.redirect("/register");
+                        return "";
+                        //Redirect if not logged in
+                    }
+                    int id = Integer.valueOf(request.queryParams("id"));
+                        removeCartItem(session, id);
+                        populateTotals(session);
+                        response.redirect("/cart");
+                        return"";
+                }
+        );
+    }
 
+    /**********************************
+     * Methods for doing cart logic
+     *********************************/
+    public void addItem(int quantity, int id, Session session) throws SQLException{
+        if (session.attribute("cart") == null){
+            session.attribute("cart", new ArrayList<Item>());
+            //Create initial cart if needed
+        }
+        ArrayList<Item> items = session.attribute("cart");
+        for (Item item: items){
+            if (item.getId() == id) {
+                //Add quantity if item exist in cart
+                item.setOrderAmount(item.getOrderAmount() + quantity);
+                return;
+            }
+        }
+        Item item = db.selectItem(id);
 
+        item.setOrderAmount(Integer.valueOf(quantity));
+        items.add(item);
+        populateTotals(session);
+    }
+    public void populateTotals(Session session){
+        //Variables needed so I can add sub and tax
+        ArrayList<Item> items = session.attribute("cart");
+        double sub = subTotal(items);
+        double tax = getTax(items);
+        double total = sub + tax;
+        session.attribute("subTotal", sub);
+        session.attribute("tax", tax);
+        session.attribute("total", total);
     }
     public double getTax(ArrayList<Item> cart){
-        return .007 * subTotal(cart);
+        return .07 * subTotal(cart);
     }
     public double subTotal(ArrayList<Item> cart){
         double total = 0;
         for(Item item: cart){
-            total += item.getPrice();
+            total += item.getPrice() * item.getOrderAmount();
         }
         return total;
+    }
+    public void removeCartItem(Session session, int id){
+        ArrayList<Item> items = session.attribute("cart");
+        Item removal = null;
+        for(Item item: items){
+            if (item.getId() == id){
+                removal = item;
+                break;
+            }
+        }
+        items.remove(removal);
     }
 }

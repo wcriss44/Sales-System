@@ -66,7 +66,7 @@
     <section class="l-content">
         <div class="max-width-2 mx-auto px2">
             <div class="clearfix pb4">
-                <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Your orders:</h1></p>
+                <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Available Items:</h1></p>
                 <article class="m-lessoncontent">
                     <table>
                         <tr>
@@ -77,7 +77,6 @@
                         </tr>
                         {{#inventory}}
                         <tr>
-
                             <td>{{name}}</td>
                             <td>{{description}}</td>
                             <td>{{price}}</td>
@@ -85,7 +84,7 @@
                             <td>
                                 <form action="/add-cart" method="post">
                                     <input type="hidden" value="{{id}}" name="id">
-                                    <div>
+                                    <div style="display:inline;">
                                         <input type="number" value="0" name="quantity">
                                         <button type="submit">Add</button>
                                     </div>
