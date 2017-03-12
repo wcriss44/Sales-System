@@ -2,9 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" media="screen" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/web/library.manifest-11e15ae036b971c0f0eb707b1d3c950dfa2cc830ffe0259683595dcd8e78d942.css" />
+    <title>Cart | Wack a doodle do</title>
 </head>
 <body>
-
+    <div style="width:100%; float:left; background:#2d2d2d;">
+        <h4 style="color:white; float:left; width:280px; display:inline; padding:10px; margin:0; text-align:left;">Shopping Cart</h4>
+        <i class="material-icons" style="color:white; float:right; width:280px; display:inline; padding:10px; margin:0; text-align:right;">shopping_cart</i>
+        <!--<img src="" style="float:right" title="shoping cart">-->
+    </div>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+        {{#cart}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{orderAmount}}</td>
+            <td>{{price}}</td>
+            <td>
+                <form action="remove-cart" type="post">
+                    <input type="hidden" value="{{id}}" name="id">
+                    <button type="submit">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {{/cart}}
+    </table>
+    <hr/>
+    <p style="text-align:right;">Subtotal: ${{subTotal}}</p>
+    <p style="text-align:right;">Tax: ${{tax}}</p>
+    <hr/>
+    <p style="text-align:right;">Total: ${{total}}</p>
 </body>
 </html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-param" content="authenticity_token" />
+    <meta name="csrf-token" content="6g1+QA60VGQZNUt2lhOFYuqHDGE73726DXOxKZNSGx63hHuFzlL1+zTODII2aAIkhCmCec84JkKpnzXCOaVmeQ==" />
+    <title>Browse | Lot-A-Shop</title>
+    <!-- Favicon -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/favicon-77ee7ce61d8b909af9f0775490ee1953843bd1cda601ee32845e2bd2a27833a4.ico">
+    <link rel="stylesheet" media="screen" href="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/web/library.manifest-11e15ae036b971c0f0eb707b1d3c950dfa2cc830ffe0259683595dcd8e78d942.css" />
+</head>
+<body class=''>
+<div class="l-main">
+    <header>
+
+        <div class="l-header" data-header>
+            <a class="l-header-logo s-beta-logo" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                <img src="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/newline-logo-5b34a515dd7a73c929bb38721f9076d2bc7d9747fe707fc51cf94286314d2afd.svg">
+            </a>  <ul class="l-header-nav xs-hide sm-hide">
+            <li><a title="Home" href="/">Home</a></li>
+
+            <li class="active"><a title="Browse"  class="active" href="/browse">Browse</a></li>
+
+            <li><a title="Checkout" href="/check-out">Check out</a></li>
+            {{#user}}
+            {{#adminStatus}}
+            <li><a title="Manage Items" href="/manage-items">Manage items</a></li>
+            {{/adminStatus}}
+            {{^adminStatus}}
+            <li><a title="Ajax" href="http://www.colgatecommercial.com/brands.aspx?brand=Ajax">Ajax</a></li>
+            {{/adminStatus}}
+            {{/user}}
+        </ul>
+            {{#user}}
+            <div data-header-dropdown class="l-header-profile xs-hide sm-hide">
+                <span class="l-header-profile-name">{{name}}</span>
+                <div class="l-header-profile-picture">
+                    <div class="m-profileimage s-profileimage-thumb" style="background-color: #32d3cb">{{initials}}</div>
+                </div>
+                <div class="l-header-profile-dropdown" role="menu">
+                    <ul>
+                        <li class="l-header-profile-dropdown-user">
+                            {{name}}
+                        </li>
+                        <li role="menuitem">
+                            <a class= "l-header-profile-dropdown-link" href="#" onclick="window.open('/cart', 'newwindow', 'width=620, height=500'); return false;"><i class="material-icons" style="color:black">shopping_cart</i></a>
+                        </li>
+                        <li role="menuitem">
+                            <a class="l-header-profile-dropdown-link" href="http://endoftheinternet.com">Don't click me</a>
+                        </li>
+                        <li role="menuitem">
+                            <a class="l-header-profile-dropdown-link" href="https://ex-lax.com/index.shtml">Get Help</a>
+                        </li>
+                        <li role="menuitem">
+                            <a class="l-header-profile-dropdown-link" href="/logout">Sign Out</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <button data-open="push-menu" class="l-header-hamburger md-hide lg-hide"></button>
+        </div>
+    </header>
+    <section class="l-content">
+        <div class="max-width-2 mx-auto px2">
+            <div class="clearfix pb4">
+                <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Your orders:</h1></p>
+                <article class="m-lessoncontent">
+                    <table>
+                        <tr>
+                            <th>Item</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                        </tr>
+                        {{#inventory}}
+                        <tr>
+
+                            <td>{{name}}</td>
+                            <td>{{description}}</td>
+                            <td>{{price}}</td>
+                            <td>{{quantity}}</td>
+                            <td>
+                                <form action="/add-cart" method="post">
+                                    <input type="hidden" value="{{id}}" name="id">
+                                    <div>
+                                        <input type="number" value="0" name="quantity">
+                                        <button type="submit">Add</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {{/inventory}}
+                    </table>
+                </article>
+            </div>
+        </div>
+    </section>
+    {{/user}}
+    <footer class="l-footer">
+        <div class="max-width-4 mx-auto px2">
+            &copy; Copyright 2015-2017 - The Iron Yard. Additions, changes, and other such tom foolery made by a student for assignment
+        </div>
+    </footer>
+</div>
+<!-- This script handles the sliding menu when you click on user name-->
+<script src="https://tiy-online-production-herokuapp-com.global.ssl.fastly.net/assets/library.manifest-04e85156b4d5d33ff285dd0da16d42d06916d439f77d93a62517a3f1d1093e60.js"></script>
+
+</body>
+</html>
