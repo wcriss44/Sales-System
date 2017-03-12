@@ -15,10 +15,10 @@ public class Main {
 
     }
     /**
-     * TODO: Add logout
+     * TODO: Add logout DONE
      * TODO: Manage items for admin
      * TODO: tax based on location (Need to add location fields to user) DONE
-     * TODO: registration page
+     * TODO: registration page DONE
      * TODO: cleanup
      * TODO: Ajax
      */

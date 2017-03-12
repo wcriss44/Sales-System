@@ -22,12 +22,12 @@
             </a>  <ul class="l-header-nav xs-hide sm-hide">
             <li><a title="Home" href="/">Home</a></li>
 
-            <li class="active"><a title="Browse"  class="active" href="/browse">Browse</a></li>
+            <li><a title="Browse" href="/browse">Browse</a></li>
 
             <li><a title="Checkout" href="/check-out">Check out</a></li>
             {{#user}}
             {{#admin}}
-            <li><a title="Manage Items" href="/manage-items">Manage items</a></li>
+            <li class="active"><a title="Manage Items "  class="active" href="/manage-items">Manage items</a></li>
             {{/admin}}
             {{^admin}}
             <li><a title="Ajax" href="http://www.colgatecommercial.com/brands.aspx?brand=Ajax">Ajax</a></li>
@@ -68,6 +68,19 @@
             <div class="clearfix pb4">
                 <p class="m-lessoncontent-desc-body" ><h1 style="text-align: center;">Available Items:</h1></p>
                 <article class="m-lessoncontent">
+                    <form action="add-item" method="post">
+                        <!--String name, String description, int quantity, double price-->
+                        <div>
+                            <input type="text" placeholder="Item Name: " name="name">
+                            <input type="text" placeholder="Cost: " name="price">
+                            <input type="number" placeholder="quantity" name="quantity">
+                         </div>
+                        <input type="text" placeholder="Description: " name="description">
+                        <button type="submit">Add</button>
+                    </form>
+                    <br/>
+                    <hr/>
+                    <br/>
                     <table>
                         <tr>
                             <th>Item</th>
@@ -82,13 +95,21 @@
                             <td>${{price}}</td>
                             <td>{{quantity}}</td>
                             <td>
-                                <form action="/add-cart" method="post">
+                                <form action="/remove-item" method="post">
                                     <input type="hidden" value="{{id}}" name="id">
                                     <div style="display:inline;">
-                                        <input type="number" value="0" name="quantity">
-                                        <button type="submit">Add</button>
+                                        <button type="submit">remove</button>
                                     </div>
                                 </form>
+                            </td>
+                            <td>
+                                <div style="display:inline">
+                                    <form action="/edit-item" method="post">
+                                        <input type="hidden" value="{{id}}" name="id">
+                                        <input type="number" value="{{quantity}}" name="quantity">
+                                        <button type="submit">Update</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         {{/inventory}}

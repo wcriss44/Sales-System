@@ -61,6 +61,9 @@ public class User {
     public double getTaxRate() {
         return taxRate;
     }
+    public boolean getAdmin(){
+        return admin;
+    }
 
     /*******************************
      * Setters

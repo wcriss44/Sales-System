@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Sparky {
+    DecimalFormat df2 = new DecimalFormat(".##");
     Database db = Database.getInstance();
     /*******************************
      * Singleton methods and fields
@@ -146,10 +148,106 @@ public class Sparky {
                 },
                 new MustacheTemplateEngine()
         );
+        Spark.get(
+                "/manage-items",
+                (request, response) -> {
+                    Session session = request.session();
+                    HashMap m = new HashMap();
+                    User user = session.attribute("user");
+                    if (user == null){
+                        return new ModelAndView(m, "register.html");
+                    }
+                    if (user.getAdmin()){
+                        m.put("user", user);
+                        m.put("inventory", db.selectItems());
+                        return new ModelAndView(m, "manageitems.html");
+                    } else {
+                        return new ModelAndView(m, "home.html");
+                    }
+                },
+                new MustacheTemplateEngine()
+        );
 
         /**************************
          *Spark POST routes
          **************************/
+        Spark.post(
+                "/remove-item",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user") == null){
+                        response.redirect("/register");
+                    }
+                    User user = session.attribute("user");
+                    if (user.getAdmin()){
+                        db.removeItem(Integer.valueOf(request.queryParams("id")));
+                        response.redirect("/manage-items");
+                        return "";
+                    } else {
+                        response.redirect("/home");
+                        return "";
+                    }
+                }
+        );
+        Spark.post(
+                "/edit-item",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user") == null){
+                        response.redirect("/register");
+                    }
+                    User user = session.attribute("user");
+                    if (user.getAdmin()){
+                        Item item = db.selectItem(Integer.valueOf(request.queryParams("id")));
+                        if (Integer.valueOf(request.queryParams("quantity")) < 0){
+                            response.redirect("/manage-items");
+                            return "";
+                        }
+                        db.updateItem(item.getId(), item.getName(), item.getDescription(), Integer.valueOf(request.queryParams("quantity")), item.getPrice());
+                        response.redirect("/manage-items");
+                        return "";
+                    } else {
+                        response.redirect("/home");
+                        return "";
+                    }
+                }
+        );
+        Spark.post(
+                "/add-item",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user") == null){
+                        response.redirect("/register");
+                    }
+                    User user = session.attribute("user");
+                    if (user.getAdmin()){
+                        String name = request.queryParams("name");
+                        String description = request.queryParams("description");
+                        String quantity = request.queryParams("quantity");
+                        String price = request.queryParams("price");
+
+                        //Check for bad entries
+                        if (name.equals("") || description.equals("") || quantity.equals("") || price.equals("")){
+                            response.redirect("/manage-items");
+                            return "";
+                        } else if (name == null || description == null || quantity == null || price == null){
+                            response.redirect("/manage-items");
+                            return "";
+                        }
+                        try {
+                            db.insertItem(name, description, Integer.valueOf(quantity), Double.valueOf(price));
+                            response.redirect("/manage-items");
+                            return "";
+                        } catch (Exception e){
+                            response.redirect("/manage-items");
+                            return "";
+                        }
+                    } else {
+                        response.redirect("/home");
+                        return "";
+                    }
+                }
+        );
         Spark.post(
                 "/login",
                 (request, response) -> {
@@ -177,7 +275,7 @@ public class Sparky {
                         String city = request.queryParams("city");
                         String state = request.queryParams("state");
                         int zip = Integer.valueOf(request.queryParams("zip"));
-                        double taxRate = Double.valueOf(getApiTax(zip));
+                        double taxRate = (Double.valueOf(getApiTax(zip) ) / 100);
                         boolean adminStatus = false;
 
 
@@ -234,6 +332,23 @@ public class Sparky {
                 }
         );
         Spark.post(
+                "/remove-cart-checkout",
+                (request, response) -> {
+                    Session session = request.session();
+                    if (session.attribute("user") != null){
+                        int id = Integer.valueOf(request.queryParams("id"));
+                        removeCartItem(session, id);
+                        populateTotals(session);
+                        response.redirect("/check-out");
+                        return"";
+                    } else {
+                        response.redirect("/register");
+                        return "";
+                        //Redirect if not logged in
+                    }
+                }
+        );
+        Spark.post(
                 "/checkout",
                 (request, response) -> {
                     Session session = request.session();
@@ -245,6 +360,9 @@ public class Sparky {
                     String userName = user.getName();
                     ArrayList<Item> cart = session.attribute("cart");
                     db.insertOrder(user.getId(), cart, session.attribute("subTotal"),session.attribute("tax"), session.attribute("total"));
+                    for (Item item: cart){
+                        db.updateItem(item.getId(), item.getName(), item.getDescription(), (item.getQuantity() - item.getOrderAmount()), item.getPrice());
+                    }
                     session.removeAttribute("cart");
                     session.removeAttribute("subTotal");
                     session.removeAttribute("tax");
@@ -271,13 +389,20 @@ public class Sparky {
         for (Item item: items){
             if (item.getId() == id) {
                 //Add quantity if item exist in cart
+                if (item.getOrderAmount() + quantity > item.getQuantity()){
+                    return;
+                }
                 item.setOrderAmount(item.getOrderAmount() + quantity);
+                populateTotals(session);
                 return;
             }
         }
         Item item = db.selectItem(id);
+        if (quantity > db.selectItem(id).getQuantity()){
+            return;
+        }
 
-        item.setOrderAmount(Integer.valueOf(quantity));
+        item.setOrderAmount(quantity);
         items.add(item);
         populateTotals(session);
     }
@@ -285,14 +410,15 @@ public class Sparky {
         //Variables needed so I can add sub and tax
         ArrayList<Item> items = session.attribute("cart");
         User user = session.attribute("user");
-        double sub = subTotal(items);
-        double tax = getTax(items, user.getTaxRate());
-        double total = sub + tax;
+        double sub = Double.valueOf(df2.format((subTotal(items))));
+        double tax = Double.valueOf(df2.format(getTax(items, user.getTaxRate())));
+        double total = Double.valueOf(df2.format(sub + tax));
         session.attribute("subTotal", sub);
         session.attribute("tax", tax);
         session.attribute("total", total);
     }
     public double getTax(ArrayList<Item> cart, double taxRate){
+        System.out.println(taxRate);
         return taxRate * subTotal(cart);
     }
     public double subTotal(ArrayList<Item> cart){

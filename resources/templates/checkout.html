@@ -27,12 +27,12 @@
 
             <li class="active"><a title="Checkout" class="active" href="/check-out">Check out</a></li>
             {{#user}}
-            {{#adminStatus}}
+            {{#admin}}
             <li><a title="Manage Items" href="/manage-items">Manage items</a></li>
-            {{/adminStatus}}
-            {{^adminStatus}}
+            {{/admin}}
+            {{^admin}}
             <li><a title="Ajax" href="http://www.colgatecommercial.com/brands.aspx?brand=Ajax">Ajax</a></li>
-            {{/adminStatus}}
+            {{/admin}}
             {{/user}}
         </ul>
             {{#user}}
@@ -86,12 +86,13 @@
                         <td>{{orderAmount}}</td>
                         <td>${{price}}</td>
                         <td>
-                            <form action="/remove-cart" method="post">
+                            <form action="/remove-cart-checkout" method="post">
                                 <input type="hidden" value="{{id}}" name="id">
                                 <button type="submit">Remove</button>
                             </form>
                         </td>
                     </tr>
+                    {{/cart}}
                     </table>
                     <hr/>
                     <p style="text-align:right;"><strong>Subtotal:</strong> ${{subTotal}}</p>
@@ -101,7 +102,6 @@
                     <form action="/checkout" method="post">
                         <button type="submit">Checkout</button>
                     </form>
-                    {{/cart}}
                 </article>
             </div>
         </div>
