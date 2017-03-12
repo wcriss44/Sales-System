@@ -26,12 +26,12 @@
 
             <li><a title="Checkout" href="/check-out">Check out</a></li>
             {{#user}}
-            {{#adminStatus}}
+            {{#admin}}
             <li><a title="Manage Items" href="/manage-items">Manage items</a></li>
-            {{/adminStatus}}
-            {{^adminStatus}}
+            {{/admin}}
+            {{^admin}}
             <li><a title="Ajax" href="http://www.colgatecommercial.com/brands.aspx?brand=Ajax">Ajax</a></li>
-            {{/adminStatus}}
+            {{/admin}}
             {{/user}}
         </ul>
             {{#user}}
@@ -74,17 +74,24 @@
                             <tr>
                                 <th>Quantity</th>
                                 <th>Item</th>
+                                <th>Description</th>
                                 <th>Price</th>
                             </tr>
                                 {{#items}}
                             <tr>
                                 <td>{{orderAmount}}</td>
                                 <td>{{name}}</td>
-                                <td>{{price}}</td>
+                                <td>{{description}}</td>
+                                <td>${{price}}</td>
                             </tr>
                                 {{/items}}
                         </table>
                     <hr/>
+                        <p style="text-align:right;"><strong>Subtotal:</strong> ${{subTotal}}</p>
+                        <p style="text-align:right;"><strong>Tax:</strong> ${{tax}}</p>
+                        <hr/>
+                        <p style="text-align:right;"><strong>Total:</strong> ${{total}}</p>
+                        <br/>
                         {{/orders}}
                     </article>
                 </div>

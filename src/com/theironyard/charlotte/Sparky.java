@@ -6,6 +6,10 @@ import spark.Session;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -259,6 +263,7 @@ public class Sparky {
         session.attribute("total", total);
     }
     public double getTax(ArrayList<Item> cart){
+
         return .07 * subTotal(cart);
     }
     public double subTotal(ArrayList<Item> cart){
@@ -278,5 +283,38 @@ public class Sparky {
             }
         }
         items.remove(removal);
+    }
+
+    /******************************
+     * Methods for user
+     *****************************/
+    public boolean userVerification(String name, String password, boolean admin, String city, String state, String zip) throws SQLException, IOException{
+        ArrayList<String> userNames = db.selectUserNames();
+        for (String userName: userNames){
+            if (name.equals(userName)){
+                return false;
+            }
+        }
+        if (password.length() < 8){
+            return false;
+        }
+
+        String url = "http://isbndb.com/api/v2/json/2NE3ECKO/book/";
+        url += title;
+
+        URL oracle = new URL(url);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(oracle.openStream()));
+
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null) {
+            if (inputLine.contains("isbn10")){
+                isbn = inputLine.substring(21,31);
+            }
+        }
+        in.close();
+
+        return true;
     }
 }

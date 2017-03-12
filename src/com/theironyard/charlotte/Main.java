@@ -14,6 +14,14 @@ public class Main {
         spark.start();
 
     }
+    /**
+     * TODO: Add logout
+     * TODO: Manage items for admin
+     * TODO: tax based on location (Need to add location fields to user)
+     * TODO: registration page
+     * TODO: cleanup
+     * TODO: Ajax
+     */
 
 
 

@@ -30,7 +30,7 @@ public class Database {
     public void createTables() throws SQLException{
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR, admin BOOLEAN)");
+        statement.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR, admin BOOLEAN, city VARCHAR, state VARCHAR, zip INTEGER)");
         statement.execute("CREATE TABLE IF NOT EXISTS items(id IDENTITY, name VARCHAR, description VARCHAR, quantity INTEGER, price DOUBLE)");
         statement.execute("CREATE TABLE IF NOT EXISTS orders(id INT, item_id INTEGER, user_id INTEGER, quantity INTEGER)");
         statement.execute("CREATE TABLE IF NOT EXISTS orderTotal(id IDENTITY, order_id INTEGER, subtotal DOUBLE, tax DOUBLE, total DOUBLE)");
@@ -44,21 +44,29 @@ public class Database {
         PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE name = ?");
         statement.setString(1, name);
         ResultSet result = statement.executeQuery();
-        int id = 0;
+        int id = 0, zip = 0;
         boolean admin = false;
+        String city = null, state = null;
+
         while(result.next()){
             id = result.getInt("id");
             name = result.getString("name");
             admin = result.getBoolean("admin");
+            city = result.getString("city");
+            state = result.getString("state");
+            zip = result.getInt("zip");
         }
-        return new User(name, id, admin, selectOrders(id));
+        return new User(name, id, admin, selectOrders(id), city, state, zip);
     }
-    public void insertUser(String name, String password, boolean admin) throws SQLException{
+    public void insertUser(String name, String password, boolean admin, String city, String state, int zip) throws SQLException{
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO users VALUES(NULL, ?, ?, ?)");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO users VALUES(NULL, ?, ?, ?, ?, ?, ?)");
         statement.setString(1, name);
         statement.setString(2, password);
         statement.setBoolean(3, admin);
+        statement.setString(4, city);
+        statement.setString(5, state);
+        statement.setInt(6, zip);
         statement.execute();
     }
     public boolean verifyUser(String userName, String password) throws SQLException{
@@ -71,6 +79,16 @@ public class Database {
             currentPass = results.getString("password");
         }
         return password.equals(currentPass);
+    }
+    public ArrayList<String> selectUserNames() throws SQLException{
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT name FROM users");
+        ResultSet results = statement.executeQuery();
+        ArrayList<String> names = new ArrayList<>();
+        while (results.next()){
+            names.add(results.getString("name"));
+        }
+        return names;
     }
 
     /*******************************
@@ -153,7 +171,6 @@ public class Database {
         statement.setInt(2, orderId);
         statement.setInt(3, userId);
 
-        Order order = null;
         ArrayList<Item> items = new ArrayList<>();
         String buyer = null;
 
@@ -167,7 +184,13 @@ public class Database {
             int orderAmount = result.getInt("orders.quantity");
             items.add(new Item(name, description, price, id, orderAmount));
         }
-        order = new Order(orderId, items, buyer);
+        Order order = new Order(orderId, items, buyer);
+
+        double[] totals = selectOrderTotal(orderId);
+        order.setSubTotal(totals[0]);
+        order.setTax(totals[1]);
+        order.setTotal(totals[2]);
+
         return order;
     }
     public void insertOrder(int userId, ArrayList<Item> items, double subtotal, double tax, double total) throws SQLException{
@@ -211,7 +234,7 @@ public class Database {
     }
 
     /*******************************
-     * Order SQL methods
+     * OrderTotal SQL methods
      *******************************/
     //id IDENTITY, order_id INTEGER, subtotal DOUBLE, tax DOUBLE, total DOUBLE
     public double[] selectOrderTotal(int orderId) throws SQLException {
@@ -219,8 +242,13 @@ public class Database {
         PreparedStatement statement = connection.prepareStatement("SELECT * FROM orderTotal WHERE order_id = ?");
         statement.setInt(1, orderId);
         ResultSet result = statement.executeQuery();
+        double[] orderTotals = new double[3];
 
-        double[] orderTotals = {result.getDouble("subtotal"), result.getDouble("tax"), result.getDouble("total")};
+        while(result.next()) {
+            orderTotals[0] = result.getDouble("subtotal");
+            orderTotals[1] = result.getDouble("tax");
+            orderTotals[2] = result.getDouble("total");
+        }
         return orderTotals;
     }
     public void insertOrderTotal(int orderId, double subtotal, double tax, double total) throws SQLException{

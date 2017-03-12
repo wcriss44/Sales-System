@@ -7,9 +7,12 @@ public class User {
     private String initials;
     private int id;
     private boolean admin;
+    private String city;
+    private String state;
+    private int zip;
     private ArrayList<Order> orders = new ArrayList<>();
 
-    public User(String name, int id, boolean admin, ArrayList<Order> orders) {
+    public User(String name, int id, boolean admin, ArrayList<Order> orders, String city, String state, int zip) {
         this.name = name;
         this.id = id;
         this.admin = admin;
@@ -17,6 +20,9 @@ public class User {
         String secondLetter = name.substring(name.length() - 1).toUpperCase();
         this.initials = firstLetter + secondLetter;
         this.orders = orders;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
     }
 
     /*******************************
@@ -38,6 +44,18 @@ public class User {
         return orders;
     }
 
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public int getZip() {
+        return zip;
+    }
+
     /*******************************
      * Setters
      *******************************/
@@ -53,5 +71,21 @@ public class User {
     }
     public void setInitials(String initials){
         this.initials = initials;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setZip(int zip) {
+        this.zip = zip;
+    }
+
+    public void setOrders(ArrayList<Order> orders) {
+        this.orders = orders;
     }
 }
