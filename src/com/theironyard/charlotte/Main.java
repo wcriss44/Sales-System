@@ -13,44 +13,6 @@ public class Main {
         Sparky spark = Sparky.getInstance();
         spark.start();
 
+        //TODO: Uncomment Server.CreateWebServer().start(); if you need a visual DB
     }
-    /**
-     * TODO: Add logout DONE
-     * TODO: Manage items for admin
-     * TODO: tax based on location (Need to add location fields to user) DONE
-     * TODO: registration page DONE
-     * TODO: cleanup
-     * TODO: Ajax
-     */
-
-
-
-
-
-
-
-
-
-//    public static void testData() throws SQLException{
-//        insertItem("Pizza", "fast food", 12, 100.10);
-//        insertItem("hamBurger", "order on phone", 1, 3.99);
-//        insertItem("pb and J", "has that butter", 3, 42.22);
-//        insertItem("shirt", "shoes", 1, .35);
-//
-//        insertUser("Will", "something", false );
-//        insertUser("Mike", "else", true);
-//
-//        ArrayList<Item> items = new ArrayList<>();
-//        items.add(selectItem(1));
-//        items.add(selectItem(2));
-//        items.add(selectItem(4));
-//
-//        items.get(0).setOrderAmount(3);
-//        items.get(1).setOrderAmount(2);
-//        items.get(2).setOrderAmount(44);
-//
-//        insertOrder(1, items);
-//    }
 }
-//TODO: IMPORTANT! Use ArrayList<Item> to track the "in cart" items. When you do cart.add(new Item(...)), make
-//TODO:                                                             sure to use the setOrderAmount() method.

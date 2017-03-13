@@ -1,13 +1,11 @@
 package com.theironyard.charlotte;
 
-import org.h2.engine.Mode;
 import spark.ModelAndView;
 import spark.Session;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
@@ -16,8 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Sparky {
-    DecimalFormat df2 = new DecimalFormat(".##");
-    Database db = Database.getInstance();
+    private DecimalFormat df2 = new DecimalFormat(".##");
+    private Database db = Database.getInstance();
     /*******************************
      * Singleton methods and fields
      *******************************/
@@ -50,6 +48,7 @@ public class Sparky {
 
                     User user = session.attribute("user");
                     if (user == null){
+                        m.put("inventory", db.selectItems());
                         return new ModelAndView(m, "index.html");
                     } else {
                         m.put("user", user);
@@ -126,6 +125,7 @@ public class Sparky {
                     Session session = request.session();
                     HashMap m = new HashMap();
                     session.invalidate();
+                    m.put("inventory", db.selectItems());
                     return new ModelAndView(m, "index.html");
                 },
                 new MustacheTemplateEngine()
@@ -418,7 +418,7 @@ public class Sparky {
         session.attribute("total", total);
     }
     public double getTax(ArrayList<Item> cart, double taxRate){
-        System.out.println(taxRate);
+
         return taxRate * subTotal(cart);
     }
     public double subTotal(ArrayList<Item> cart){

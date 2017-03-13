@@ -35,7 +35,24 @@
             <div class="clearfix pb4">
                 <p class="m-lessoncontent-desc-body"><h1 style="text-align: center;">Items for sale</h1></p>
                 <article class="m-lessoncontent">
-
+                    <table>
+                        <tr>
+                            <th>Item</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                        </tr>
+                        {{#inventory}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{description}}</td>
+                            <td>${{price}}</td>
+                            <td>{{quantity}}</td>
+                            <td>
+                            </td>
+                        </tr>
+                        {{/inventory}}
+                    </table>
                 </article>
             </div>
         </div>
